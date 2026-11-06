@@ -1,0 +1,57 @@
+{
+  "name": "dsh-local-llm",
+  "version": "1.0.0",
+  "private": true,
+  "description": "DSH plugin: manage the local llama.cpp Qwen3.5-4B from a Settings page — start/stop, launch parameters, deployment paths, provider-route and compaction sync, a request-capture proxy, and a local_worker tool that lets an online model hand off cheap chores. / DSH 插件：在设置页管理本机 llama.cpp 的 Qwen3.5-4B，并在模型路由、压缩策略与混合作业上配套。",
+  "type": "module",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client/client.js",
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg"
+  },
+  "files": [
+    "index.js",
+    "lib",
+    "client/client.js",
+    "cordis.patch.yml",
+    "locale/*.json",
+    "icon.svg",
+    "README.md",
+    "LICENSE"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-settings"
+      ]
+    }
+  },
+  "keywords": [
+    "deepseek",
+    "harness",
+    "dsh",
+    "dsh-plugin",
+    "llama.cpp",
+    "qwen",
+    "local-llm",
+    "offline"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/verson00/dsh-local-llm.git"
+  },
+  "homepage": "https://github.com/verson00/dsh-local-llm#readme",
+  "bugs": {
+    "url": "https://github.com/verson00/dsh-local-llm/issues"
+  },
+  "author": "verson00",
+  "license": "MIT"
+}

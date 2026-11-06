@@ -1,0 +1,12 @@
+# dsh-local-llm bundle patch: inserts the plugin row into the profile's layer
+# stack. Paths are resolved in the host half; the Settings page owns the rest.
+- insert:
+    - id: local-llm
+      name: 'dsh-local-llm'
+      config:
+        installDir: 'D:\local-llm'
+        # Leave empty to derive <installDir>\bin\llama-b12069\llama-server.exe,
+        # <installDir>\models and <installDir>\logs.
+        exePath: ''
+        modelsDir: ''
+        logsDir: ''

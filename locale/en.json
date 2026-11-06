@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Local model",
+    "description": "Manage the local Qwen3.5-4B on llama.cpp: start/stop, launch parameters, deployment paths with detection, plus route and compaction sync, request capture, and the hybrid worker."
+  }
+}
