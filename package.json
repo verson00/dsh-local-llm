@@ -1,10 +1,13 @@
 {
   "name": "dsh-local-llm",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "description": "DSH plugin: manage the local llama.cpp Qwen3.5-4B from a Settings page — start/stop, launch parameters, deployment paths, provider-route and compaction sync, a request-capture proxy, and a local_worker tool that lets an online model hand off cheap chores. / DSH 插件：在设置页管理本机 llama.cpp 的 Qwen3.5-4B，并在模型路由、压缩策略与混合作业上配套。",
   "type": "module",
   "main": "index.js",
+  "engines": {
+    "dsh": ">=0.2.2-rc.1 <0.3.0"
+  },
   "exports": {
     ".": "./index.js",
     "./client": "./client/client.js",

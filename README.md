@@ -60,6 +60,7 @@ logs   = <root>\logs
 ## 安装
 
 ### 前置
+- **DSH `>=0.2.2-rc.1 <0.3.0`**（`package.json` 的 `engines.dsh`；不满足时 DSH 会在组合阶段跳过本 bundle）。
 - Windows + NVIDIA GPU（8 GB 显存可跑 4B Q4；更大显存可放宽上下文）。
 - [llama.cpp](https://github.com/ggml-org/llama.cpp) 的 `llama-server.exe`（本项目在 `b12069` 验证）。
 - 一份 Qwen3.5-4B 的 GGUF 量化和 mmproj（见下方「模型」）。
@@ -162,3 +163,19 @@ logs   = <root>\logs
 ## 许可
 
 [MIT](LICENSE)
+
+## 在插件市场里安装
+
+插件市场（`dshmarket`）的条目来自精选列表 [awesome-dsh-plugin](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin)，
+按 **一个插件一个 YAML** 收录；本仓库已按它的要求提交（`data/plugins/verson00__dsh-local-llm.yml`）。
+收录生效前，可以直接在 **插件 → 添加插件** 里填本仓库地址安装：
+
+```
+https://github.com/verson00/dsh-local-llm
+```
+
+或命令行：
+
+```sh
+dsh plugin --profile <profile> add github:verson00/dsh-local-llm
+```
