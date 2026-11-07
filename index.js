@@ -1594,6 +1594,16 @@ function createRuntime(ctx, config) {
           windowsHide: true,
           stdio: ['ignore', outFd, errFd],
         })
+        // A binary that cannot be started reports as an 'error' event, not as a
+        // thrown exception. With no listener Node treats that event as fatal and
+        // terminates the host process: the user clicks 启动 and DSH disappears,
+        // leaving an empty server.err.log and a pid file that says "undefined".
+        // Handling it here degrades that into a red status light with a reason.
+        childProcess.on('error', (cause) => {
+          if (stopIntent) return
+          phase = 'failed'
+          error = `llama-server 启动失败：${cause instanceof Error ? cause.message : String(cause)}`
+        })
       } finally {
         closeSync(outFd)
         closeSync(errFd)
@@ -1611,7 +1621,11 @@ function createRuntime(ctx, config) {
     error = null
     launch = { at: Date.now(), pid: childProcess.pid, settings: { ...settings }, args }
     try {
-      writeFileSync(pidPath, String(childProcess.pid), 'ascii')
+      // A failed spawn leaves `pid` undefined; writing that would replace a useful
+      // pid file with the literal text "undefined" and hide the real failure.
+      if (typeof childProcess.pid === 'number') {
+        writeFileSync(pidPath, String(childProcess.pid), 'ascii')
+      }
     } catch {
       // A pid file is a convenience for stop(); in-memory state still works.
     }

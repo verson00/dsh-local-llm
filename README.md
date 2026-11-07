@@ -122,6 +122,51 @@ logs   = <root>\logs
 
 ---
 
+## 点「启动」时 DSH 整个退出？（1.0.1 的 bug，1.0.2 已修）
+
+**症状**：点「启动」后 DSH 窗口直接消失，没有报错；`logs\server.err.log` 与
+`logs\server.out.log` 都是 **0 字节**；`logs\server.pid` 的内容是字符串 `undefined`。
+
+**原因**：`spawn(llama-server.exe, …)` 之后没有监听 `'error'` 事件。Node 里子进程启动失败
+（Windows 上常见 `EPERM`、`ENOENT`）不是抛异常，而是发一个 `'error'` 事件；无人监听时
+它是**未捕获事件，会终止整个宿主进程**。所以插件不是"启动失败"，而是把 DSH 一起带走了。
+0 字节日志 + `undefined` 的 pid 文件，正是"子进程从未存在"的证据。
+
+1.0.2 起补上了监听：spawn 失败只把状态灯转红并给出原因，不再影响宿主。但**根因（spawn 起不来）
+仍在环境侧**，所以 Windows 上仍建议用下面的外部启动方式。
+
+### 外部启动（spawn 失败时的推荐做法）
+
+插件靠 **`/health` + `logs\server.pid`** 判断服务在不在，所以自己起进程完全兼容：
+状态页会显示「**已就绪（外部启动）**」，模型路由、`local_worker`、压缩策略联动都照常工作。
+
+```powershell
+$root = 'D:\llm-local'
+Start-Process -FilePath "$root\bin\llama-b12180\llama-server.exe" -ArgumentList @(
+  '--model', "$root\qwen3.5-4b\Qwen3.5-4B-UD-Q4_K_XL.gguf",
+  '--alias', 'qwen3.5-4b',
+  '--host', '127.0.0.1', '--port', '8080',
+  '--ctx-size', '32768', '--n-gpu-layers', '99', '--threads', '8',
+  '--flash-attn', 'on', '--jinja', '--metrics',
+  '--parallel', '1',
+  '--mmproj', "$root\qwen3.5-4b\mmproj-F16.gguf", '--image-min-tokens', '1024',
+  '--reasoning', 'off', '--no-reasoning-preserve'
+) -WorkingDirectory $root -WindowStyle Hidden -PassThru |
+  ForEach-Object { Set-Content "$root\logs\server.pid" $_.Id -Encoding ascii }
+```
+
+几个参数不是可选的：
+
+- `--parallel 1`：不写会让 llama.cpp 自己取 `auto`（4 个槽），多出来的序列状态和计算缓冲
+  在小显存卡上直接把窗口挤爆。
+- `--ctx-size`：要和设置页「启动参数」里的上下文一致，否则路由的 `contextWindow` 与实际不符。
+- `--reasoning off`：Qwen3.5 默认思考，不关会把输出预算全烧在 `<think>` 上、正文为空。
+- `--mmproj`：不开就是纯文本；开了才能看图/OCR。
+
+要停：设置页点「停止」，或者按 `logs\server.pid` 里的 PID `Stop-Process` 掉。
+
+---
+
 ## 模型
 
 - 原始模型页：**[Qwen/Qwen3.5-4B](https://huggingface.co/Qwen/Qwen3.5-4B)**
@@ -145,6 +190,8 @@ logs   = <root>\logs
 | 现象 | 原因 / 处理 |
 | --- | --- |
 | 状态灯红，日志里 `failed to load model` | 模型文件缺失或路径不对；展开「部署路径」点「检测」 |
+| 点「启动」后 DSH 整个退出、日志 0 字节 | 1.0.1 的 spawn 崩溃 bug；升级到 1.0.2，或按上文「点启动时 DSH 整个退出？」改用外部启动 |
+| 外部启动后页面仍显示「已停止」 | `logs\server.pid` 没写对；页面判断靠 `/health` + 该文件里的 PID |
 | 生成很慢（<20 tok/s） | 上下文过大导致显存溢出；把上下文降到 ≤ 65536，或关掉视觉 |
 | 启动失败 `port already in use` | 8080 被别的 `llama-server` 占用；先在页面或脚本停掉旧的 |
 | 页面上路由显示「不一致」 | 点「同步」把 provider 的 `contextWindow`/`maxTokens` 写回配置 |
