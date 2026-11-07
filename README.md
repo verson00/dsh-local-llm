@@ -214,8 +214,10 @@ Start-Process -FilePath "$root\bin\llama-b12180\llama-server.exe" -ArgumentList 
 ## 在插件市场里安装
 
 插件市场（`dshmarket`）的条目来自精选列表 [awesome-dsh-plugin](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin)，
-按 **一个插件一个 YAML** 收录；本仓库已按它的要求提交（`data/plugins/verson00__dsh-local-llm.yml`）。
-收录生效前，可以直接在 **插件 → 添加插件** 里填本仓库地址安装：
+按 **一个插件一个 YAML** 收录。本仓库的投稿条目就放在
+[`data/plugins/verson00__dsh-local-llm.yml`](data/plugins/verson00__dsh-local-llm.yml)，
+字段与精选列表要求一致，原样提交到那边的 PR 即可。
+**收录生效前**，可以直接在 **插件 → 添加插件** 里填本仓库地址安装：
 
 ```
 https://github.com/verson00/dsh-local-llm

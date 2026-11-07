@@ -1,0 +1,6 @@
+url: https://github.com/verson00/dsh-local-llm
+name: verson00/dsh-local-llm
+category: model
+description:
+  en: 'Runs a local llama.cpp Qwen3.5-4B for DSH: start, stop and launch parameters on a settings page, deployment-path detection, provider-route and compaction-policy sync, and a local_worker tool that hands text, image and video-frame chores to the local model.'
+  zh: '为 DSH 运行本机 llama.cpp 的 Qwen3.5-4B：设置页启停与启动参数、部署路径检测、模型路由与压缩策略同步，并提供 local_worker 工具把文本、图片与视频抽帧这类杂活交给本地模型。'
